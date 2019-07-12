@@ -4,39 +4,53 @@ from unittest import TestCase
 
 import requests
 
-from utils import get_jwt_token
+from utils import request_jwt_token
 
 
 class EnrollmentGetTests(TestCase):
 
-    api_root = "https://api.stage.edx.org/registrar/v2"
-    test_url = "{}/programs/master-of-how/enrollments".format(api_root)
+    registrar_root = "https://registrar-kdmccormick.sandbox.edx.org/api/v2"
+    path_format = registrar_root + "/programs/{program_key}/enrollments"
+    allowed_url = path_format.format(program_key="master-of-popcorn")
+    disallowed_url = path_format.format(program_key="master-of-cranberries")
 
-    def test_unauthenticated_gives_401(self):
-        response = requests.get(self.test_url)
-        self.assertEqual(response.status_code, 401)
-
-    def test_successful_get_gives_202(self):
-        jwt = get_jwt_token()
-        headers = {"Authorization": "JWT {}".format(jwt)}
-        response = requests.get(self.test_url, headers=headers)
+    def test_accepted(self):
+        headers = {"Authorization": request_jwt_token()}
+        response = requests.get(self.allowed_url, headers=headers)
         self.assertEqual(response.status_code, 202)
+
+    def test_permission_denied(self):
+        headers = {"Authorization": request_jwt_token()}
+        response = requests.get(self.disallowed_url, headers=headers)
+        self.assertEqual(response.status_code, 403)
+
+    def test_unauthenticated(self):
+        response_1 = requests.get(self.allowed_url)
+        self.assertEqual(response_1.status_code, 401)
+        response_2 = requests.get(self.disallowed_url)
+        self.assertEqual(response_2.status_code, 401)
 
 
 class EnrollmentPatchTests(TestCase):
 
-    api_root = "https://api.stage.edx.org/registrar/v2"
-    test_url = "{}/programs/master-of-how/enrollments".format(api_root)
+    registrar_root = "https://registrar-kdmccormick.sandbox.edx.org/api/v2"
+    path_format = registrar_root + "/programs/{program_key}/enrollments"
+    allowed_url = path_format.format(program_key="master-of-popcorn")
+    disallowed_url = path_format(program_key="master-of-cranberries")
 
-    def test_unauthenticated_gives_401(self):
-        response = requests.put(self.test_url)
-        self.assertEqual(response.status_code, 401)
-
-    def test_successful_patch_gives_200(self):
-        jwt = get_jwt_token()
-        headers = {"Authorization": "JWT {}".format(jwt)}
-        data = [
-            {"student_key": "bob", "status": "pending"},
-        ]
-        response = requests.patch(self.test_url, headers=headers, json=data)
+    def test_ok(self):
+        headers = {"Authorization": request_jwt_token()}
+        data = [{"student_key": "bob", "status": "pending"}]
+        response = requests.patch(self.allowed_url, headers=headers, json=data)
         self.assertEqual(response.status_code, 200)
+
+    def test_permission_denied(self):
+        headers = {"Authorization": request_jwt_token()}
+        response = requests.patch(self.disallowed_url, headers=headers, json=data)
+        self.assertEqual(response.status_code, 403)
+
+    def test_unauthenticated(self):
+        response_1 = requests.patch(self.allowed_url)
+        self.assertEqual(response_1.status_code, 401)
+        response_2 = requests.patch(self.disallowed_url)
+        self.assertEqual(response_2.status_code, 401)

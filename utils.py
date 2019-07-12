@@ -8,7 +8,7 @@ from secrets import CLIENT_ID, CLIENT_SECRET
 LMS_ROOT = "https://courses.stage.edx.org"
 
 
-def get_jwt_token():
+def request_jwt_token():
     """
     Using our API client credentials, get a JWT token from the LMS.
 
@@ -23,5 +23,4 @@ def get_jwt_token():
     }
     response = requests.post(url, data=data)
     jwt_token = response.json()["access_token"]
-    print("Retrieved JWT token from LMS.")
-    return jwt_token
+    return "JWT " + jwt_token
