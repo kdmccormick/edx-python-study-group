@@ -1,13 +1,50 @@
-""" Tests, version 8, sans GET tests """
+""" Tests, version 7 """
 
 from unittest import TestCase
 
 import requests
 
-from mixins import EnrollmentTestMixin
+from utils import request_jwt_token
 
 
-class EnrollmentPatchTests(TestCase, EnrollmentTestMixin):
+class EnrollmentTestMixin(object):
+
+    registrar_root = "https://registrar-kdmccormick.sandbox.edx.org/api/v2"
+    path_format = registrar_root + "/programs/{program_key}/enrollments"
+    allowed_url = path_format.format(program_key="master-of-popcorn")
+    disallowed_url = path_format.format(program_key="master-of-cranberries")
+
+    method = None  # Override in subclass!
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.headers = {"Authorization": request_jwt_token()}
+        print("Requested JWT token!")
+
+    def test_permission_denied(self):
+        response = requests.request(
+            self.method, self.disallowed_url, headers=self.headers
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_unauthenticated(self):
+        response_1 = requests.request(self.method, self.allowed_url)
+        self.assertEqual(response_1.status_code, 401)
+        response_2 = requests.request(self.method, self.disallowed_url)
+        self.assertEqual(response_2.status_code, 401)
+
+
+class EnrollmentGetTests(EnrollmentTestMixin, TestCase):
+
+    method = 'GET'
+
+    def test_accepted(self):
+        response = requests.get(self.allowed_url, headers=self.headers)
+        self.assertEqual(response.status_code, 202)
+
+
+class EnrollmentPatchTests(EnrollmentTestMixin, TestCase):
 
     method = 'PATCH'
 
@@ -15,60 +52,3 @@ class EnrollmentPatchTests(TestCase, EnrollmentTestMixin):
         data = [{"student_key": "bob", "status": "pending"}]
         response = requests.patch(self.allowed_url, headers=self.headers, json=data)
         self.assertEqual(response.status_code, 200)
-
-    def test_ok_multiple(self):
-        data = [
-            {"student_key": "bob", "status": "pending"},
-            {"student_key": "alice", "status": "enrolled"},
-        ]
-        response = requests.patch(self.allowed_url, headers=self.headers, json=data)
-        self.assertEqual(response.status_code, 200)
-
-    def test_no_content(self):
-        data = []
-        response = requests.patch(self.allowed_url, headers=self.headers, json=data)
-        self.assertEqual(response.status_code, 204)
-
-    def test_multi_status_with_duplicate(self):
-        data = [
-            {"student_key": "bob", "status": "pending"},
-            {"student_key": "alice", "status": "enrolled"},
-            {"student_key": "bob", "status": "pending"},
-        ]
-        response = requests.patch(self.allowed_url, headers=self.headers, json=data)
-        self.assertEqual(response.status_code, 207)
-
-    def test_multi_status_with_invalid(self):
-        data = [
-            {"student_key": "bob", "status": "pending"},
-            {"student_key": "alice", "status": "enrolled"},
-            {"student_key": "xavier", "status": "chilling"},
-        ]
-        response = requests.patch(self.allowed_url, headers=self.headers, json=data)
-        self.assertEqual(response.status_code, 207)
-
-    def test_processing_failed(self):
-        data = [
-            {"student_key": "bob", "status": "pending"},
-            {"student_key": "bob", "status": "enrolled"},
-            {"student_key": "xavier", "status": "chilling"},
-        ]
-        response = requests.patch(self.allowed_url, headers=self.headers, json=data)
-        self.assertEqual(response.status_code, 422)
-
-    def test_bad_request_invalid_keys(self):
-        data = [
-            {"!!!": "###", "@@@": "&&&"}
-        ]
-        response = requests.patch(self.allowed_url, headers=self.headers, json=data)
-        self.assertEqual(response.status_code, 400)
-
-    def test_bad_request_not_a_dict(self):
-        data = [
-            "this is not a dict",
-            {"student_key": "bob", "status": "pending"},
-        ]
-        response = requests.patch(self.allowed_url, headers=self.headers, json=data)
-        self.assertEqual(response.status_code, 400)
-
-

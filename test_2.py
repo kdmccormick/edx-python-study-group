@@ -44,7 +44,7 @@ class EnrollmentPatchTests(EnrollmentTests):
 
     def test_permission_denied(self):
         headers = {"Authorization": request_jwt_token()}
-        response = requests.patch(self.disallowed_url, headers=headers, json=data)
+        response = requests.patch(self.disallowed_url, headers=headers)
         self.assertEqual(response.status_code, 403)
 
     def test_unauthenticated(self):

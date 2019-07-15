@@ -36,7 +36,7 @@ class EnrollmentPatchTests(TestCase):
     registrar_root = "https://registrar-kdmccormick.sandbox.edx.org/api/v2"
     path_format = registrar_root + "/programs/{program_key}/enrollments"
     allowed_url = path_format.format(program_key="master-of-popcorn")
-    disallowed_url = path_format(program_key="master-of-cranberries")
+    disallowed_url = path_format.format(program_key="master-of-cranberries")
 
     def test_ok(self):
         headers = {"Authorization": request_jwt_token()}
@@ -46,7 +46,7 @@ class EnrollmentPatchTests(TestCase):
 
     def test_permission_denied(self):
         headers = {"Authorization": request_jwt_token()}
-        response = requests.patch(self.disallowed_url, headers=headers, json=data)
+        response = requests.patch(self.disallowed_url, headers=headers)
         self.assertEqual(response.status_code, 403)
 
     def test_unauthenticated(self):

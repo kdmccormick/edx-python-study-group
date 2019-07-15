@@ -2,6 +2,8 @@
 
 import requests
 
+from utils import request_jwt_token
+
 
 class EnrollmentTestMixin(object):
 

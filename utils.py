@@ -5,7 +5,7 @@ import requests
 from secrets import CLIENT_ID, CLIENT_SECRET
 
 
-LMS_ROOT = "https://courses.stage.edx.org"
+LMS_ROOT = "https://kdmccormick.sandbox.edx.org"
 
 
 def request_jwt_token():
