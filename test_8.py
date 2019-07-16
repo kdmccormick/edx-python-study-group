@@ -1,4 +1,4 @@
-""" Tests, version 7 """
+""" Tests, version 8 """
 
 from unittest import TestCase
 
@@ -52,3 +52,10 @@ class EnrollmentPatchTests(EnrollmentTestMixin, TestCase):
         data = [{"student_key": "bob", "status": "pending"}]
         response = requests.patch(self.allowed_url, headers=self.headers, json=data)
         self.assertEqual(response.status_code, 200)
+
+
+class UnrelatedTests(TestCase):
+
+    def test_numbers(self):
+        self.assertEqual(1 + 1, 2)
+

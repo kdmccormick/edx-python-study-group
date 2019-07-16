@@ -13,9 +13,12 @@ class EnrollmentTestMixin(object):
     path_format = registrar_root + "/programs/{program_key}/enrollments"
     allowed_url = path_format.format(program_key="master-of-popcorn")
     disallowed_url = path_format.format(program_key="master-of-cranberries")
-    headers = {"Authorization": request_jwt_token()}
 
     method = None  # Override in subclass!
+
+    def setUp(self):
+        super().setUp()
+        self.headers = {"Authorization": request_jwt_token()}
 
     def test_permission_denied(self):
         response = requests.request(

@@ -19,7 +19,6 @@ class EnrollmentTestMixin(object):
     def setUp(self):
         super().setUp()
         self.headers = {"Authorization": request_jwt_token()}
-        print("Requested JWT token!")
 
     def test_permission_denied(self):
         response = requests.request(
@@ -34,7 +33,7 @@ class EnrollmentTestMixin(object):
         self.assertEqual(response_2.status_code, 401)
 
 
-class EnrollmentGetTests(TestCase, EnrollmentTestMixin):
+class EnrollmentGetTests(EnrollmentTestMixin, TestCase):
 
     method = 'GET'
 
@@ -43,7 +42,7 @@ class EnrollmentGetTests(TestCase, EnrollmentTestMixin):
         self.assertEqual(response.status_code, 202)
 
 
-class EnrollmentPatchTests(TestCase, EnrollmentTestMixin):
+class EnrollmentPatchTests(EnrollmentTestMixin, TestCase):
 
     method = 'PATCH'
 
