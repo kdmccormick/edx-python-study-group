@@ -4,7 +4,7 @@ from unittest import TestCase
 
 import requests
 
-from utils import request_jwt_token
+from utils import request_jwt
 
 
 class EnrollmentGetTests(TestCase):
@@ -15,12 +15,12 @@ class EnrollmentGetTests(TestCase):
     disallowed_url = path_format.format(program_key="master-of-cranberries")
 
     def test_accepted(self):
-        headers = {"Authorization": request_jwt_token()}
+        headers = {"Authorization": request_jwt()}
         response = requests.get(self.allowed_url, headers=headers)
         self.assertEqual(response.status_code, 202)
 
     def test_permission_denied(self):
-        headers = {"Authorization": request_jwt_token()}
+        headers = {"Authorization": request_jwt()}
         response = requests.get(self.disallowed_url, headers=headers)
         self.assertEqual(response.status_code, 403)
 
@@ -39,13 +39,13 @@ class EnrollmentPatchTests(TestCase):
     disallowed_url = path_format.format(program_key="master-of-cranberries")
 
     def test_ok(self):
-        headers = {"Authorization": request_jwt_token()}
+        headers = {"Authorization": request_jwt()}
         data = [{"student_key": "bob", "status": "pending"}]
         response = requests.patch(self.allowed_url, headers=headers, json=data)
         self.assertEqual(response.status_code, 200)
 
     def test_permission_denied(self):
-        headers = {"Authorization": request_jwt_token()}
+        headers = {"Authorization": request_jwt()}
         response = requests.patch(self.disallowed_url, headers=headers)
         self.assertEqual(response.status_code, 403)
 

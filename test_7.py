@@ -4,7 +4,7 @@ from unittest import TestCase
 
 import requests
 
-from utils import request_jwt_token
+from utils import request_jwt
 
 
 class EnrollmentTestMixin(object):
@@ -13,7 +13,7 @@ class EnrollmentTestMixin(object):
     path_format = registrar_root + "/programs/{program_key}/enrollments"
     allowed_url = path_format.format(program_key="master-of-popcorn")
     disallowed_url = path_format.format(program_key="master-of-cranberries")
-    headers = {"Authorization": request_jwt_token()}
+    headers = {"Authorization": request_jwt()}
 
     method = None  # Override in subclass!
 

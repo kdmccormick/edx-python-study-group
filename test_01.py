@@ -20,8 +20,9 @@ class EnrollmentPatchTests(EnrollmentTestMixin, TestCase):
         data = [
             {"student_key": "bob", "status": "pending"},
             {"student_key": "alice", "status": "enrolled"},
+            {"student_key": "xavier", "status": "enrolled"},
         ]
-        response = requests.patch(self.allowed_url, headers=self.headers, json=data)
+        response = requests.post(self.allowed_url, headers=self.headers, json=data)
         self.assertEqual(response.status_code, 200)
 
     def test_no_content(self):

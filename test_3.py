@@ -4,7 +4,7 @@ from unittest import TestCase
 
 import requests
 
-from utils import request_jwt_token
+from utils import request_jwt
 
 
 class EnrollmentTests(TestCase):
@@ -17,7 +17,7 @@ class EnrollmentTests(TestCase):
     method = None  # Override in subclass!
 
     def test_permission_denied(self):
-        headers = {"Authorization": request_jwt_token()}
+        headers = {"Authorization": request_jwt()}
         response = requests.request(
             self.method, self.disallowed_url, headers=headers
         )
@@ -35,7 +35,7 @@ class EnrollmentGetTests(EnrollmentTests):
     method = 'GET'
 
     def test_accepted(self):
-        headers = {"Authorization": request_jwt_token()}
+        headers = {"Authorization": request_jwt()}
         response = requests.get(self.allowed_url, headers=headers)
         self.assertEqual(response.status_code, 202)
 
@@ -45,7 +45,7 @@ class EnrollmentPatchTests(EnrollmentTests):
     method = 'PATCH'
 
     def test_ok(self):
-        headers = {"Authorization": request_jwt_token()}
+        headers = {"Authorization": request_jwt()}
         data = [{"student_key": "bob", "status": "pending"}]
         response = requests.patch(self.allowed_url, headers=headers, json=data)
         self.assertEqual(response.status_code, 200)

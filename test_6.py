@@ -4,7 +4,7 @@ from unittest import TestCase
 
 import requests
 
-from utils import request_jwt_token
+from utils import request_jwt
 
 
 class EnrollmentTestMixin(object):
@@ -18,7 +18,7 @@ class EnrollmentTestMixin(object):
 
     def setUp(self):
         super().setUp()
-        self.headers = {"Authorization": request_jwt_token()}
+        self.headers = {"Authorization": request_jwt()}
 
     def test_permission_denied(self):
         response = requests.request(
