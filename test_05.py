@@ -1,4 +1,4 @@
-""" Tests, version 8, sans GET tests """
+""" DD tests, version 8, sans GET tests """
 
 from unittest import TestCase
 

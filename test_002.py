@@ -1,4 +1,4 @@
-""" Tests, version 8, sans GET tests """
+""" Product tests, version 8, sans GET tests """
 
 from itertools import product
 from unittest import TestCase
