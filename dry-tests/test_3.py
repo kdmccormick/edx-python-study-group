@@ -16,6 +16,8 @@ class EnrollmentTests(TestCase):
 
     method = None  # Override in subclass!
 
+    __test__ = False
+
     def test_permission_denied(self):
         headers = {"Authorization": request_jwt()}
         response = requests.request(
@@ -33,6 +35,7 @@ class EnrollmentTests(TestCase):
 class EnrollmentGetTests(EnrollmentTests):
 
     method = 'GET'
+    __test__ = True
 
     def test_accepted(self):
         headers = {"Authorization": request_jwt()}
@@ -43,6 +46,7 @@ class EnrollmentGetTests(EnrollmentTests):
 class EnrollmentPatchTests(EnrollmentTests):
 
     method = 'PATCH'
+    __test__ = True
 
     def test_ok(self):
         headers = {"Authorization": request_jwt()}
