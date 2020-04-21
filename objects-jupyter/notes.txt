@@ -1,0 +1,17 @@
+"Objects are Python's abstraction for data."
+
+An Object in Python is a:
+	* identity, which is the int returned by id()
+	* a type, which is an object whose type is `type`, and
+	* a value
+
+Some objects are immutable (strings, tuples, frozensets),
+some are mutable (lists, dicts, sets).
+
+	* Note: Some immutable objects (like tuples)
+	        can reference mutable data.
+	        So while the _identities_ of the objects it
+	        references will never change, the _values_
+	        of those objects may.
+
+
